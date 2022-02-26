@@ -14,36 +14,10 @@ import edu.wisc.cs.sdn.vnet.Iface;
  * @author Aaron Gember-Jacobson
  */
 
-
-class SwitchNode {
-	private byte[] _MACaddr;
-	private Iface _interface;
-	private int secondsLeft;
-
-	public SwitchNode(byte[] _MACaddr, Iface _interface, int secondsLeft) {
-		this._MACaddr = _MACaddr;
-		this._interface = _interface;
-		this.secondsLeft = secondsLeft;
-	}
-
-	@Override
-    public boolean equals(Object o) {
- 
-        if (o == this) {
-            return true;
-        }
-        if (!(o instanceof SwitchNode)) {
-            return false;
-        }
-        SwitchNode swn = (SwitchNode) o;
-         
-        return Arrays.equals(this._MACaddr, swn._MACaddr);
-	}
-}
-
 public class Switch extends Device
 {	
 	private ArrayList<SwitchNode> switchTable; //This is the Switch Table
+
 	/**
 	 * Creates a router for a specific host.
 	 * @param host hostname for the router
@@ -68,19 +42,27 @@ public class Switch extends Device
 		MACAddress MACout = etherPacket.getDestinationMAC();
 		byte[] MACinBytes = MACin.toBytes();
 		byte[] MACoutBytes = MACout.toBytes();
-		SwitchNode table_node_in = new SwitchNode(MACinBytes, inIface, 15);
+		SwitchNode table_node_in = new SwitchNode(MACinBytes, inIface, System.currentTimeMillis());
 
-		// check if the table is empty, if so add source address to table
+		// if reciving MAC already exists, update it by deleting and adding new
+		// if it doesn't exist, add a new one
 		if (!switchTable.contains(table_node_in)) 
-			switchTable.add(table_node_in);
+			switchTable.remove(table_node_in);
+		switchTable.add(table_node_in);
 
 		// check if the table contains the destination adress
 		if(!switchTable.contains(new SwitchNode(MACoutBytes, null, 0))) {
-			// flood, find end host, add to table
-		}
-		// destination host is in table, send packet
+			// flood
+			for (SwitchNode node : switchTable) {
+				this.sendPacket(etherPacket, node.getIface());
+			}
+			return;
 
-		
-		
+		}
+		else {
+			// find out Interface in table and send
+			SwitchNode outNode = switchTable.get(switchTable.indexOf(new SwitchNode(MACoutBytes, null, 0)));
+			this.sendPacket(etherPacket, outNode.getIface());
+		}
 	}
 }
