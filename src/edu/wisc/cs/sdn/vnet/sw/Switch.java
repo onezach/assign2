@@ -17,6 +17,7 @@ import edu.wisc.cs.sdn.vnet.Iface;
 public class Switch extends Device
 {	
 	private ArrayList<SwitchNode> switchTable; //This is the Switch Table
+	private Thread switchTableTimer;
 
 	/**
 	 * Creates a router for a specific host.
@@ -25,6 +26,9 @@ public class Switch extends Device
 	public Switch(String host, DumpFile logfile)
 	{
 		super(host,logfile);
+		this.switchTable = new ArrayList<SwitchNode>(20); // guessing no more than 20 devcies, should check
+		this.switchTableTimer = new Thread(new SwitchTableTimer(this.switchTable));
+		switchTableTimer.start();
 
 	}
 

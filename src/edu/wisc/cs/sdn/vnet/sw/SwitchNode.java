@@ -18,6 +18,10 @@ public class SwitchNode {
 		return this._interface;
 	}
 
+    public long getTimeCreated() {
+        return this.timeCreated;
+    }
+
 	@Override
     public boolean equals(Object o) {
  
