@@ -5,6 +5,7 @@ import edu.wisc.cs.sdn.vnet.DumpFile;
 import edu.wisc.cs.sdn.vnet.Iface;
 
 import net.floodlightcontroller.packet.Ethernet;
+import net.floodlightcontroller.packet.IPv4;
 
 /**
  * @author Aaron Gember-Jacobson and Anubhavnidhi Abhashkumar
@@ -85,7 +86,46 @@ public class Router extends Device
 		/********************************************************************/
 		/* TODO: Handle packets                                             */
 		
+		// type check
+		if (etherPacket.getEtherType() != Ethernet.TYPE_IPv4) {
+			return;
+		}
+
+		IPv4 payload = (IPv4) etherPacket.getPayload();
+
+		// checksum check
+		short precheck = payload.getChecksum();
+		payload.resetChecksum();
+		payload.serialize();
+		short postcheck = payload.getChecksum();
+		if (precheck != postcheck) {
+			return;
+		}
 		
+		// decrement ttl, plus ttl check
+	 	payload.setTtl((byte) (payload.getTtl() - 1));
+		if (payload.getTtl() == 0) {
+			return;
+		}
+
+		// check if existing interface
+		for (Iface i : this.interfaces.values()) {
+			if (i.getIpAddress() == payload.getDestinationAddress()) {
+				return;
+			}
+		}
+
+		// collect/check if existing route entry
+		RouteEntry route = routeTable.lookup(payload.getDestinationAddress());
+		if (route == null) {
+			return;
+		}
+
+		// update payloud, update source and destination mac addresses, and send!
+		etherPacket.setPayload(payload);
+		etherPacket.setSourceMACAddress(route.getInterface().getMacAddress().toString());
+		etherPacket.setDestinationMACAddress(arpCache.lookup(payload.getDestinationAddress()).getMac().toString());
+		this.sendPacket(etherPacket, route.getInterface());
 		/********************************************************************/
 	}
 }

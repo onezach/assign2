@@ -42,46 +42,23 @@ public class RouteTable
 			
 			RouteEntry cur = null; // current entry with longest prefix match
 			int best = 0; // length of current longest prefix match
-			String inIP = IPv4.fromIPv4Address(ip); // String rep of 
 
 			// iterating through each entry in the entries list
 			for (int i = 0; i < entries.size(); i++) {
 
-				// disgusting handful of lines converting this entry's int maskAddress to a binary string
-				String[] submaskStrings = IPv4.fromIPv4Address(entries.get(i).getMaskAddress()).split(".");
-				String submaskBinary = "";
-				for (int n = 0; n < 4; n++) {
-					submaskBinary += String.format("%8s", Integer.toBinaryString(Integer.parseInt(submaskStrings[n]))).replace(' ', '0');
-				}
+				// current mask
+				int ema = entries.get(i).getMaskAddress();
+				if ((ema & best) == best) { // bitwise AND --> if current mask is bigger than current best: continue, else skip (irrelevant)
+					int ipMask = ip & ema;
+					int dMask = entries.get(i).getDestinationAddress() & ema;
 
-				// figure out the length of this entry's prefix
-				int p_length = 0;
-				while (submaskBinary.charAt(p_length) == '1') {
-					p_length++;
-				}
-
-				// figure out this entry's prefix
-				String[] entryStrings = IPv4.fromIPv4Address(entries.get(i).getDestinationAddress()).split("."); 
-				String entryBinary = "";
-				for (int n = 0; n < 4; n++) {
-					entryBinary += String.format("%8s", Integer.toBinaryString(Integer.parseInt(entryStrings[n]))).replace(' ', '0');
-				}
-				String prefix = entryBinary.substring(0, p_length);
-
-				// determine if prefix aligns with passed IP
-				int matches = 0;
-				for (int n = 0; n < p_length; n++) {
-					if (inIP.charAt(n) == prefix.charAt(n)) {
-						matches++;
+					if (ipMask == dMask) { // match?
+						// update best/cur
+						best = ema;
+						cur = entries.get(i);
 					}
 				}
 
-				// all matches --> prefix aligns, so next check is if it is better than current best
-				if (matches == p_length && p_length > best) {
-					// if so, update best, cur
-					best = p_length;
-					cur = entries.get(i);
-				}
 			}
 
 			// best > 0 in the event that a matching entry was found, else return null
