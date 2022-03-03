@@ -45,19 +45,24 @@ public class Switch extends Device
 		MACAddress MACout = etherPacket.getDestinationMAC();
 		byte[] MACinBytes = MACin.toBytes();
 		byte[] MACoutBytes = MACout.toBytes();
+		System.out.println("MacIn = " + MACinBytes.toString());
+		System.out.println("MacOut = " + MACoutBytes.toString());
 		SwitchNode table_node_in = new SwitchNode(MACinBytes, inIface, System.currentTimeMillis());
 
 
 
 		// if reciving MAC already exists, update it by deleting and adding new
 		// if it doesn't exist, add a new one
-		if (!switchTable.contains(table_node_in)) 
+		if (!switchTable.contains(table_node_in)) {
+			System.out.println("Mac already in table");
 			switchTable.remove(table_node_in);
+		}
 		switchTable.add(table_node_in);
 
 		// check if the table contains the destination adress
 		if(!switchTable.contains(new SwitchNode(MACoutBytes, null, 0))) {
 			// flood
+			System.out.println("flooding");
 			for (SwitchNode node : switchTable) {
 				this.sendPacket(etherPacket, node.getIface());
 			}
@@ -66,8 +71,10 @@ public class Switch extends Device
 		}
 		else {
 			// find out Interface in table and send
+			System.out.println("MAC found, sending packet");
 			SwitchNode outNode = switchTable.get(switchTable.indexOf(new SwitchNode(MACoutBytes, null, 0)));
 			// if timed out
+			/*
 			if (System.currentTimeMillis() - outNode.getTimeCreated() > 15000) {
 				switchTable.remove(outNode);
 				// flood
@@ -76,6 +83,7 @@ public class Switch extends Device
 				}
 				return;
 			}
+			*/
 			this.sendPacket(etherPacket, outNode.getIface());
 		}
 	}
