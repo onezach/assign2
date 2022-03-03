@@ -128,7 +128,7 @@ public class Router extends Device
 		// update payloud, update source and destination mac addresses, and send!
 		etherPacket.setPayload(payload);
 		etherPacket.setSourceMACAddress(route.getInterface().getMacAddress().toBytes());
-		etherPacket.setDestinationMACAddress(arpCache.lookup(payload.getDestinationAddress()).getMac().toBytes());
+		etherPacket.setDestinationMACAddress(arpCache.lookup(route.getDestinationAddress()).getMac().toBytes());
 		this.sendPacket(etherPacket, route.getInterface());
 		/********************************************************************/
 	}
