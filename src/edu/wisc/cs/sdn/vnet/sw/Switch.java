@@ -16,7 +16,7 @@ import edu.wisc.cs.sdn.vnet.Iface;
 public class Switch extends Device
 {	
 	private ArrayList<SwitchNode> switchTable; //This is the Switch Table
-	private Thread switchTableTimer;
+	//private Thread switchTableTimer;
 
 	/**
 	 * Creates a router for a specific host.
@@ -26,8 +26,8 @@ public class Switch extends Device
 	{
 		super(host,logfile);
 		this.switchTable = new ArrayList<SwitchNode>(20); // guessing no more than 20 devcies, should check
-		this.switchTableTimer = new Thread(new SwitchTableTimer(this.switchTable));
-		switchTableTimer.start();
+		//this.switchTableTimer = new Thread(new SwitchTableTimer(this.switchTable));
+		//switchTableTimer.start();
 
 	}
 
@@ -47,6 +47,8 @@ public class Switch extends Device
 		byte[] MACoutBytes = MACout.toBytes();
 		SwitchNode table_node_in = new SwitchNode(MACinBytes, inIface, System.currentTimeMillis());
 
+
+
 		// if reciving MAC already exists, update it by deleting and adding new
 		// if it doesn't exist, add a new one
 		if (!switchTable.contains(table_node_in)) 
@@ -65,6 +67,15 @@ public class Switch extends Device
 		else {
 			// find out Interface in table and send
 			SwitchNode outNode = switchTable.get(switchTable.indexOf(new SwitchNode(MACoutBytes, null, 0)));
+			// if timed out
+			if (System.currentTimeMillis() - outNode.getTimeCreated() > 15000) {
+				switchTable.remove(outNode);
+				// flood
+				for (SwitchNode node : switchTable) {
+					this.sendPacket(etherPacket, node.getIface());
+				}
+				return;
+			}
 			this.sendPacket(etherPacket, outNode.getIface());
 		}
 	}
