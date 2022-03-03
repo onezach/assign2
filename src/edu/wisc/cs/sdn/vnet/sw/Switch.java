@@ -53,7 +53,7 @@ public class Switch extends Device
 
 		// if reciving MAC already exists, update it by deleting and adding new
 		// if it doesn't exist, add a new one
-		if (!switchTable.contains(table_node_in)) {
+		if (switchTable.contains(table_node_in)) {
 			System.out.println("Mac already in table");
 			switchTable.remove(table_node_in);
 		}
