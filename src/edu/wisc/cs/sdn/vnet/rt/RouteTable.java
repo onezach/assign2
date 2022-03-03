@@ -42,16 +42,15 @@ public class RouteTable
 			
 			RouteEntry cur = null; // current entry with longest prefix match
 			int best = 0; // length of current longest prefix match
-
+			
 			// iterating through each entry in the entries list
 			for (int i = 0; i < entries.size(); i++) {
-
+				
 				// current mask
 				int ema = entries.get(i).getMaskAddress();
 				if ((ema & best) == best) { // bitwise AND --> if current mask is bigger than current best: continue, else skip (irrelevant)
 					int ipMask = ip & ema;
 					int dMask = entries.get(i).getDestinationAddress() & ema;
-
 					if (ipMask == dMask) { // match?
 						// update best/cur
 						best = ema;
@@ -61,8 +60,8 @@ public class RouteTable
 
 			}
 
-			// best > 0 in the event that a matching entry was found, else return null
-			if (best > 0) { 
+			// best < 0 in the event that a matching entry was found, else return null
+			if (best < 0) { 
 				return cur;
 			}
 			return null;
