@@ -140,9 +140,11 @@ public class Router extends Device
 		// update payload, update source and destination mac addresses, and send!
 		// etherPacket.setPayload(payload);
 
-		etherPacket.setSourceMACAddress(route.getInterface().getMacAddress().toBytes());	
+		etherPacket.setSourceMACAddress((route.getInterface().getMacAddress()).toBytes());	
+		System.out.println(etherPacket.getSourceMACAddress());
 
 		etherPacket.setDestinationMACAddress(newDest);
+		System.out.println(etherPacket.getDestinationMACAddress());
 
 		this.sendPacket(etherPacket, route.getInterface());
 		/********************************************************************/
