@@ -125,6 +125,8 @@ public class Router extends Device
 			return;
 		}
 
+
+
 		// update payloud, update source and destination mac addresses, and send!
 		etherPacket.setPayload(payload);
 		etherPacket.setSourceMACAddress(route.getInterface().getMacAddress().toBytes());
