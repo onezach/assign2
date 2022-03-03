@@ -109,6 +109,8 @@ public class Router extends Device
 			System.out.println("ttl error");
 			return;
 		}
+		payload.resetChecksum();
+		payload.serialize();
 
 		// check if existing interface
 		for (Iface i : this.interfaces.values()) {
@@ -138,13 +140,12 @@ public class Router extends Device
 		}
 
 		// update payload, update source and destination mac addresses, and send!
-		// etherPacket.setPayload(payload);
 
 		etherPacket.setSourceMACAddress((route.getInterface().getMacAddress()).toBytes());	
-		System.out.println(etherPacket.getSourceMACAddress());
+		// System.out.println(etherPacket.getSourceMACAddress());
 
 		etherPacket.setDestinationMACAddress(newDest);
-		System.out.println(etherPacket.getDestinationMACAddress());
+		// System.out.println(etherPacket.getDestinationMACAddress());
 
 		this.sendPacket(etherPacket, route.getInterface());
 		/********************************************************************/
