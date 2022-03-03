@@ -125,8 +125,15 @@ public class Router extends Device
 			return;
 		}
 
-		if (arpCache.lookup(route.getGatewayAddress()) == null) {
-			System.out.println("destination error");
+		byte[] newDest;
+		if (route.getGatewayAddress() != 0) {
+			newDest = (arpCache.lookup(route.getGatewayAddress()).getMac()).toBytes();
+		} else {
+			newDest = (arpCache.lookup(payload.getDestinationAddress()).getMac()).toBytes();
+		}
+
+		if (newDest == null) {
+			System.out.println("destination error!");
 			return;
 		}
 
@@ -135,7 +142,7 @@ public class Router extends Device
 
 		etherPacket.setSourceMACAddress(route.getInterface().getMacAddress().toBytes());	
 
-		etherPacket.setDestinationMACAddress((arpCache.lookup(route.getGatewayAddress()).getMac()).toBytes());
+		etherPacket.setDestinationMACAddress(newDest);
 
 		this.sendPacket(etherPacket, route.getInterface());
 		/********************************************************************/
