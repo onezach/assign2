@@ -65,7 +65,7 @@ public class RouteTable
 			}
 
 			// best > 0 in the event that a matching entry was found, else return null
-			if (best > 0) { 
+			if (best < 0) { 
 				return cur;
 			}
 			return null;
