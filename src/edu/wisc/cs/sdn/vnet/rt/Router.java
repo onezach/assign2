@@ -109,6 +109,7 @@ public class Router extends Device
 			System.out.println("ttl error");
 			return;
 		}
+		// reset checksum
 		payload.resetChecksum();
 		payload.serialize();
 
@@ -140,13 +141,8 @@ public class Router extends Device
 		}
 
 		// update payload, update source and destination mac addresses, and send!
-
 		etherPacket.setSourceMACAddress((route.getInterface().getMacAddress()).toBytes());	
-		// System.out.println(etherPacket.getSourceMACAddress());
-
 		etherPacket.setDestinationMACAddress(newDest);
-		// System.out.println(etherPacket.getDestinationMACAddress());
-
 		this.sendPacket(etherPacket, route.getInterface());
 		/********************************************************************/
 	}

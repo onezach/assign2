@@ -48,14 +48,10 @@ public class RouteTable
 				
 				// current mask
 				int ema = entries.get(i).getMaskAddress();
-				System.out.println("mask: " + ema);
 				if ((ema & best) == best) { // bitwise AND --> if current mask is bigger than current best: continue, else skip (irrelevant)
 					int ipMask = ip & ema;
 					int dMask = entries.get(i).getDestinationAddress() & ema;
-					System.out.println("ipMask: " + ipMask);
-					System.out.println("dMask: " + dMask);
 					if (ipMask == dMask) { // match?
-						System.out.println("Match??");
 						// update best/cur
 						best = ema;
 						cur = entries.get(i);
