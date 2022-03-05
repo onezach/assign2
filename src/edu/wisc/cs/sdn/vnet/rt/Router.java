@@ -99,14 +99,12 @@ public class Router extends Device
 		payload.serialize();
 		short postcheck = payload.getChecksum();
 		if (precheck != postcheck) {
-			System.out.println("checksum error");
 			return;
 		}
 		
 		// decrement ttl, plus ttl check
 	 	payload.setTtl((byte) (payload.getTtl() - 1));
 		if (payload.getTtl() == 0) {
-			System.out.println("ttl error");
 			return;
 		}
 		// reset checksum
@@ -116,7 +114,6 @@ public class Router extends Device
 		// check if existing interface
 		for (Iface i : this.interfaces.values()) {
 			if (i.getIpAddress() == payload.getDestinationAddress()) {
-				System.out.println("iface error");
 				return;
 			}
 		}
@@ -124,7 +121,6 @@ public class Router extends Device
 		// collect/check if existing route entry
 		RouteEntry route = routeTable.lookup(payload.getDestinationAddress());
 		if (route == null) {
-			System.out.println("rtable error");
 			return;
 		}
 
@@ -136,11 +132,10 @@ public class Router extends Device
 		}
 
 		if (newDest == null) {
-			System.out.println("destination error!");
 			return;
 		}
 
-		// update payload, update source and destination mac addresses, and send!
+		// update source and destination mac addresses and send!
 		etherPacket.setSourceMACAddress((route.getInterface().getMacAddress()).toBytes());	
 		etherPacket.setDestinationMACAddress(newDest);
 		this.sendPacket(etherPacket, route.getInterface());
