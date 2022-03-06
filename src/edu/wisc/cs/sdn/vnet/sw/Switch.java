@@ -59,15 +59,17 @@ public class Switch extends Device
 			switchTable.remove(table_node_in);
 		}
 		switchTable.add(table_node_in);
+		System.out.println("added " + table_node_in.getIface().getName());
 
 		// check if the table contains the destination adress
 		if(!switchTable.contains(new SwitchNode(MACoutBytes, null, 0))) {
 			// flood
 			System.out.println("flooding");
 			for (SwitchNode node : switchTable) {
-				//if (!node.equals(table_node_in)) {
-				this.sendPacket(etherPacket, node.getIface());
-				//}
+				if (!node.equals(table_node_in)) {
+					this.sendPacket(etherPacket, node.getIface());
+					System.out.println("sending to " + node.getIface().getName());
+				}
 			}
 			return;
 
