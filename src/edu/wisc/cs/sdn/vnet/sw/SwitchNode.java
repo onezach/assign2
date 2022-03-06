@@ -22,6 +22,10 @@ public class SwitchNode {
         return this.timeCreated;
     }
 
+	public byte[] get_MACaddr() {
+		return this._MACaddr;
+	}
+
 	@Override
     public boolean equals(Object o) {
  
