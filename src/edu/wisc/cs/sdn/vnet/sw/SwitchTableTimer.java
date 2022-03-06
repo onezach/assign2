@@ -17,11 +17,16 @@ public class SwitchTableTimer implements Runnable {
             } catch (InterruptedException e) {
             }
 
+            synchronized(switchTable)
+            {
+                
             for (SwitchNode node : this.switchTable) {
                 if (System.currentTimeMillis() - node.getTimeCreated() > 15000) {
                     switchTable.remove(node);
                 }
             }
+
+            }   
             
         }
         
