@@ -38,7 +38,7 @@ public class Switch extends Device
 	 */
 	public void handlePacket(Ethernet etherPacket, Iface inIface)
 	{
-		if (etherPacket.getEtherType() == 34525) {
+		if (etherPacket.getEtherType() != Ethernet.TYPE_IPv4) {
 			return;
 		}
 
@@ -49,8 +49,7 @@ public class Switch extends Device
 		MACAddress MACout = etherPacket.getDestinationMAC();
 		byte[] MACinBytes = MACin.toBytes();
 		byte[] MACoutBytes = MACout.toBytes();
-		//System.out.println("MacIn = " + MACinBytes.toString());
-		//System.out.println("MacOut = " + MACoutBytes.toString());
+		
 		SwitchNode table_node_in = new SwitchNode(MACinBytes, inIface, System.currentTimeMillis());
 
 		// if reciving MAC already exists delete it
