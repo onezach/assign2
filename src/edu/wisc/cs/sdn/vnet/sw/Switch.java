@@ -65,10 +65,10 @@ public class Switch extends Device
 		if(!switchTable.contains(new SwitchNode(MACoutBytes, null, 0))) {
 			// flood
 			System.out.println("flooding");
-			for (SwitchNode node : switchTable) {
-				if (!node.equals(table_node_in)) {
-					System.out.println("sending to " + node.getIface().getName());
-					//this.sendPacket(etherPacket, node.getIface());
+			for (Iface interFace : interfaces.values()) {
+				if (!interFace.getName().equals(table_node_in.getIface().getName())) {
+					System.out.println("sending to " + interFace.getName());
+					this.sendPacket(etherPacket, interFace);
 					
 				}
 			}
