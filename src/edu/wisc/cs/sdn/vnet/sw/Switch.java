@@ -68,7 +68,7 @@ public class Switch extends Device
 			for (SwitchNode node : switchTable) {
 				if (!node.equals(table_node_in)) {
 					System.out.println("sending to " + node.getIface().getName());
-					this.sendPacket(etherPacket, node.getIface());
+					//this.sendPacket(etherPacket, node.getIface());
 					
 				}
 			}
