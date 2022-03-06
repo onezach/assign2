@@ -38,6 +38,10 @@ public class Switch extends Device
 	 */
 	public void handlePacket(Ethernet etherPacket, Iface inIface)
 	{
+		if (etherPacket.getEtherType() == 34525) {
+			return;
+		}
+
 		System.out.println("*** -> Received packet: " +
 				etherPacket.toString().replace("\n", "\n\t"));
 		
