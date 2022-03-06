@@ -65,7 +65,7 @@ public class Switch extends Device
 			// flood
 			System.out.println("flooding");
 			for (SwitchNode node : switchTable) {
-				if (!node.equals(table_node_in)) {
+				if (!node.getIface().getName().equals(inIface.getName())) {
 					this.sendPacket(etherPacket, node.getIface());
 				}
 			}
