@@ -57,20 +57,20 @@ public class Switch extends Device
 		synchronized(switchTable)
 		{
 		if (switchTable.contains(table_node_in)) {
-			System.out.println("Mac already in table");
+			//System.out.println("Mac already in table");
 			switchTable.remove(table_node_in);
 		}
 		switchTable.add(table_node_in);
-		System.out.println("added " + table_node_in.getIface().getName());
+		//System.out.println("added " + table_node_in.getIface().getName());
 		
 
 		// check if the table contains the destination adress
 		if(!switchTable.contains(new SwitchNode(MACoutBytes, null, 0))) {
 			// flood
-			System.out.println("flooding");
+			//System.out.println("flooding");
 			for (Iface interFace : interfaces.values()) {
 				if (!interFace.getName().equals(table_node_in.getIface().getName())) {
-					System.out.println("sending to " + interFace.getName());
+					//System.out.println("sending to " + interFace.getName());
 					this.sendPacket(etherPacket, interFace);
 					
 				}
@@ -80,7 +80,7 @@ public class Switch extends Device
 		}
 		else {
 			// find out Interface in table and send
-			System.out.println("MAC found, sending packet");
+			//System.out.println("MAC found, sending packet");
 			SwitchNode outNode = switchTable.get(switchTable.indexOf(new SwitchNode(MACoutBytes, null, 0)));
 			this.sendPacket(etherPacket, outNode.getIface());
 		}
